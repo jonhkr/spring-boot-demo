@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -61,6 +60,18 @@ public class SpringBootDemoApplicationTests {
 				.exchange()
 				.expectStatus().isOk()
 				.expectBody().jsonPath("$.description").isEqualTo(createTodo.getDescription());
+	}
+
+	@Test
+	public void shouldValidateCreateTodoCommand() {
+		CreateTodo createTodo = new CreateTodo();
+		createTodo.setDescription("");
+
+		webTestClient.post().uri("/api/v1/todos")
+				.contentType(MediaType.APPLICATION_JSON)
+				.syncBody(createTodo)
+				.exchange()
+				.expectStatus().isBadRequest();
 	}
 }
 
